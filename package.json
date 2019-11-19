@@ -1,0 +1,37 @@
+{
+  "name": "redis-js-adapter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "nodemon --watch . --exec 'mocha ./test/index.js || true'",
+    "eslint": "eslint src/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PauloFerreira25/redis-js-adapter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PauloFerreira25/redis-js-adapter/issues"
+  },
+  "homepage": "https://github.com/PauloFerreira25/redis-js-adapter#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-arrays": "^2.0.0",
+    "eslint": "^6.6.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-mocha": "^6.2.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "mocha": "^6.2.2",
+    "nodemon": "^1.19.4",
+    "proxy-agent": "^3.1.1"
+  },
+  "dependencies": {
+    "redis": "^2.8.0"
+  }
+}
