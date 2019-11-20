@@ -4,6 +4,8 @@ Promise.promisifyAll(redis)
 const RedisReposiroty = require('./RedisReposiroty')
 const flatten = require('flat')
 const unflatten = require('flat').unflatten
+const NativeObject = require('./NativeObject')
+const nativeObject = new NativeObject()
 class RedisService {
   constructor () {
     this._conn = undefined
@@ -64,7 +66,7 @@ class RedisService {
   async get (key, options = {}) {
     const lKey = await this.keyConcat(key, options)
     const flat = await this._rep.hgetall(this._conn, lKey)
-    return unflatten(flat)
+    return unflatten(await nativeObject.converter(flat))
   }
 
   async keys (key, options = {}) {

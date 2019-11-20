@@ -19,7 +19,7 @@ describe('run', function () {
     expect(doc1).to.be.a('object')
   })
   it('insert doc 2', async function () {
-    const docInsert = { a: 1, b: { d: 1, e: 2 }, c: 3 }
+    const docInsert = { a: 1, b: { d: 1, e: 2 }, c: 3, f: true, g: ['a', 1, true, { h: 1 }] }
     const addDoc = await redis.set(keyDoc2, docInsert)
     doc2 = addDoc
     expect(doc2).to.be.a('object')
@@ -38,11 +38,6 @@ describe('run', function () {
   })
   it('findAllKeysNoPrefix', async function () {
     const fullScan = await redis.keys('*', { noPrefix: true })
-    expect(fullScan).to.array()
-  })
-  it('findAllKeysNoPrefix', async function () {
-    const fullScan = await redis.keys('b', { noPrefix: true })
-    console.log(fullScan)
     expect(fullScan).to.array()
   })
   it('getTTL', async function () {
