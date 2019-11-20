@@ -1,5 +1,6 @@
 const expect = require('chai').expect
 const redis = require('../../src/index')
+const config = require('./config')
 describe('init', function () {
   it('Test DB não inicializado', async function () {
     try {
@@ -11,18 +12,6 @@ describe('init', function () {
     }
   })
   it('Iniciar o redis', async function () {
-    const config = {
-      connection: {
-        port: 6379, // replace with your port
-        host: 'ec2-3-15-32-117.us-east-2.compute.amazonaws.com' // replace with your hostanme or IP address
-        // password: 'your password' // replace with your password
-      },
-      extras: {
-        prefixKey: 'user_',
-        expireTimeSeconds: 3600
-
-      }
-    }
     const init = await redis.init(config)
     expect(init).to.be.a('object')
   })

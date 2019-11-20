@@ -32,6 +32,8 @@
     "proxy-agent": "^3.1.1"
   },
   "dependencies": {
+    "bluebird": "^3.7.1",
+    "flat": "^5.0.0",
     "redis": "^2.8.0"
   }
 }

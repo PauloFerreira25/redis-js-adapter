@@ -2,20 +2,55 @@ const expect = require('chai').expect
 const chai = require('chai')
 const assertArrays = require('chai-arrays')
 chai.use(assertArrays)
+const config = require('./config')
 const redis = require('../../src/index')
 let doc1
-const keyDoc1 = '058a3e25-eebb-4aad-afff-15d150e754e3'
-// let doc2
+let doc2
+const keyDoc1 = '058a3e25-eebb-4aad-afff-15d150e754e4'
+const keyDoc2 = '058a3e25-eebb-4aad-afff-15d150e754e5'
+
 // let doc3
 // let doc4
 describe('run', function () {
   it('insert doc 1', async function () {
     const docInsert = { a: 1, b: 2, c: 3 }
-    const addDoc = await redis.create(keyDoc1, docInsert)
-    console.log(addDoc)
+    const addDoc = await redis.set(keyDoc1, docInsert)
     doc1 = addDoc
     expect(doc1).to.be.a('object')
   })
+  it('insert doc 2', async function () {
+    const docInsert = { a: 1, b: { d: 1, e: 2 }, c: 3 }
+    const addDoc = await redis.set(keyDoc2, docInsert)
+    doc2 = addDoc
+    expect(doc2).to.be.a('object')
+  })
+  it('findByKey', async function () {
+    const findDoc = await redis.get(keyDoc1)
+    expect(findDoc).to.deep.equal(doc1)
+  })
+  it('findByKey', async function () {
+    const findDoc = await redis.get(keyDoc2)
+    expect(findDoc).to.deep.equal(doc2)
+  })
+  it('findAllKeys', async function () {
+    const fullScanPrefix = await redis.keys('*')
+    expect(fullScanPrefix).to.array()
+  })
+  it('findAllKeysNoPrefix', async function () {
+    const fullScan = await redis.keys('*', { noPrefix: true })
+    expect(fullScan).to.array()
+  })
+  it('findAllKeysNoPrefix', async function () {
+    const fullScan = await redis.keys('b', { noPrefix: true })
+    console.log(fullScan)
+    expect(fullScan).to.array()
+  })
+  it('getTTL', async function () {
+    const ttl = await redis.ttl(keyDoc1)
+    // console.log(ttl)
+    expect(ttl).to.lte(config.extras.expireTimeSeconds).to.gte(0)
+  })
+
   // it('insert doc 2', async function () {
   //   const docInsert = { a: 1, b: 2, c: 4 }
   //   const addDoc = await arangodb.create(dataBase, collectionName, docInsert)
