@@ -27,6 +27,12 @@ class RedisService {
     return key
   }
 
+  async keyUnConcat (key, options) {
+    if (options.noPrefix) { return key }
+    if (this._config.extras.prefixKey) { return key.replace(this._config.extras.prefixKey, '') }
+    return key
+  }
+
   async hmset (key, doc, options = {}) {
     const lKey = await this.keyConcat(key, options)
     let result
@@ -58,7 +64,9 @@ class RedisService {
 
   async keys (key, options = {}) {
     const lKey = await this.keyConcat(key, options)
-    return this._rep.keys(lKey)
+    const result = await this._rep.keys(lKey)
+    const pall = result.map(e => this.keyUnConcat(e, options))
+    return Promise.all(pall)
   }
 
   async expire (key, time, options = {}) {

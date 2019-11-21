@@ -34,6 +34,7 @@ describe('run', function () {
   })
   it('findAllKeys', async function () {
     const fullScanPrefix = await redis.keys('*')
+    // console.log(fullScanPrefix)
     expect(fullScanPrefix).to.array()
   })
   it('findAllKeysNoPrefix', async function () {
