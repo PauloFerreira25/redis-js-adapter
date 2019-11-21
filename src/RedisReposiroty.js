@@ -1,37 +1,84 @@
+const redis = require('redis')
+var Promise = require('bluebird')
+Promise.promisifyAll(redis)
+
 class RedisReposiroty {
-  async setex (_conn, key, ttl, doc) {
-    const serializer = JSON.stringify(doc)
-    // return _conn.setex(key, ttl, serializer)
-    // console.log({ key }, { serializer })
-    return _conn.setexAsync(key, ttl, serializer)
+  constructor () {
+    this._conn = undefined
+    this._config = undefined
   }
 
-  async set (_conn, key, doc) {
-    const serializer = JSON.stringify(doc)
-    return _conn.setAsync(key, serializer)
+  async getDB () {
+    if (!this._conn) {
+      await this.createConnection()
+    }
+    return this._conn
   }
 
-  async hmset (_conn, key, obj) {
+  async createConnection () {
+    if (this._config && this._config.connection) {
+      this._conn = redis.createClient(this._config.connection)
+    } else {
+      throw new Error('Não existe configuração para iniciar o DB')
+    }
+  }
+
+  async init (config) {
+    this._config = config
+    await this.createConnection()
+    return this._conn
+  }
+
+  async setex (key, ttl, doc) {
+    const conn = await this.getDB()
+    console.log(conn)
+    const serializer = JSON.stringify(doc)
+    return conn.setexAsync(key, ttl, serializer)
+  }
+
+  async set (key, doc) {
+    const conn = await this.getDB()
+    const serializer = JSON.stringify(doc)
+    return conn.setAsync(key, serializer)
+  }
+
+  async get (key, doc) {
+    const conn = await this.getDB()
+    const deserializer = await conn.getAsync(key)
+    return JSON.parse(deserializer)
+  }
+
+  async hmset (key, obj) {
     // console.log({ arrayData })
     // const inn = [key].concat(arrayData)
     // console.log({ inn })
-    return _conn.hmsetAsync(key, obj)
+    const conn = await this.getDB()
+    return conn.hmsetAsync(key, obj)
   }
 
-  async hgetall (_conn, key) {
-    return _conn.hgetallAsync(key)
+  async hgetall (key) {
+    const conn = await this.getDB()
+    return conn.hgetallAsync(key)
   }
 
-  async keys (_conn, key) {
-    return _conn.keysAsync(key)
+  async keys (key) {
+    const conn = await this.getDB()
+    return conn.keysAsync(key)
   }
 
-  async ttl (_conn, key) {
-    return _conn.ttlAsync(key)
+  async ttl (key) {
+    const conn = await this.getDB()
+    return conn.ttlAsync(key)
   }
 
-  async expire (_conn, key, time) {
-    return _conn.expireAsync(key, time)
+  async expire (key, time) {
+    const conn = await this.getDB()
+    return conn.expireAsync(key, time)
+  }
+
+  async del (key) {
+    const conn = await this.getDB()
+    return conn.delAsync(key)
   }
 }
 module.exports = RedisReposiroty

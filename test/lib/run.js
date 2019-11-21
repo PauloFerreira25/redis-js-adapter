@@ -14,22 +14,22 @@ const keyDoc2 = '058a3e25-eebb-4aad-afff-15d150e754e5'
 describe('run', function () {
   it('insert doc 1', async function () {
     const docInsert = { a: 1, b: 2, c: 3 }
-    const addDoc = await redis.set(keyDoc1, docInsert)
+    const addDoc = await redis.hmset(keyDoc1, docInsert)
     doc1 = addDoc
     expect(doc1).to.be.a('object')
   })
   it('insert doc 2', async function () {
     const docInsert = { a: 1, b: { d: 1, e: 2 }, c: 3, f: true, g: ['a', 1, true, { h: 1 }] }
-    const addDoc = await redis.set(keyDoc2, docInsert)
+    const addDoc = await redis.hmset(keyDoc2, docInsert)
     doc2 = addDoc
     expect(doc2).to.be.a('object')
   })
   it('findByKey', async function () {
-    const findDoc = await redis.get(keyDoc1)
+    const findDoc = await redis.hgetall(keyDoc1)
     expect(findDoc).to.deep.equal(doc1)
   })
   it('findByKey', async function () {
-    const findDoc = await redis.get(keyDoc2)
+    const findDoc = await redis.hgetall(keyDoc2)
     expect(findDoc).to.deep.equal(doc2)
   })
   it('findAllKeys', async function () {

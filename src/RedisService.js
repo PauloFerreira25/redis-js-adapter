@@ -1,6 +1,4 @@
-const redis = require('redis')
-var Promise = require('bluebird')
-Promise.promisifyAll(redis)
+
 const RedisReposiroty = require('./RedisReposiroty')
 const flatten = require('flat')
 const unflatten = require('flat').unflatten
@@ -14,24 +12,13 @@ class RedisService {
   }
 
   async getDB () {
-    if (!this._conn) {
-      await this.createConnection()
-    }
-    return this._conn
-  }
-
-  async createConnection () {
-    if (this._config && this._config.connection) {
-      this._conn = redis.createClient(this._config.connection)
-    } else {
-      throw new Error('Não existe configuração para iniciar o DB')
-    }
+    return this._rep.getDB()
   }
 
   async init (config) {
     this._config = config
-    await this.createConnection()
-    return this._conn
+    await this._rep.init(config)
+    return this._rep.getDB()
   }
 
   async keyConcat (key, options) {
@@ -40,12 +27,12 @@ class RedisService {
     return key
   }
 
-  async set (key, doc, options = {}) {
+  async hmset (key, doc, options = {}) {
     const lKey = await this.keyConcat(key, options)
     let result
     const flat = flatten(doc)
     if (this._config.extras.expireTimeSeconds) {
-      result = await this._rep.hmset(this._conn, lKey, flat)
+      result = await this._rep.hmset(lKey, flat)
       if (result === 'OK') {
         const timeTTL = await this.expire(key, this._config.extras.expireTimeSeconds, options)
         // console.log(timeTTL)
@@ -54,7 +41,7 @@ class RedisService {
         }
       }
     } else {
-      result = await this._rep.hmset(this._conn, lKey, flat)
+      result = await this._rep.hmset(lKey, flat)
     }
     if (result === 'OK') {
       return doc
@@ -63,25 +50,25 @@ class RedisService {
     }
   }
 
-  async get (key, options = {}) {
+  async hgetall (key, options = {}) {
     const lKey = await this.keyConcat(key, options)
-    const flat = await this._rep.hgetall(this._conn, lKey)
+    const flat = await this._rep.hgetall(lKey)
     return unflatten(await nativeObject.converter(flat))
   }
 
   async keys (key, options = {}) {
     const lKey = await this.keyConcat(key, options)
-    return this._rep.keys(this._conn, lKey)
+    return this._rep.keys(lKey)
   }
 
   async expire (key, time, options = {}) {
     const lKey = await this.keyConcat(key, options)
-    return this._rep.expire(this._conn, lKey, time)
+    return this._rep.expire(lKey, time)
   }
 
   async ttl (key, options = {}) {
     const lKey = await this.keyConcat(key, options)
-    return this._rep.ttl(this._conn, lKey)
+    return this._rep.ttl(lKey)
   }
 }
 module.exports = RedisService
