@@ -45,6 +45,11 @@ describe('run', function () {
     // console.log(ttl)
     expect(ttl).to.lte(config.extras.expireTimeSeconds).to.gte(0)
   })
+  it('delKey', async function () {
+    const result = await redis.del(keyDoc1)
+    // eslint-disable-next-line no-unused-expressions
+    expect(result).to.be.true
+  })
 
   // it('insert doc 2', async function () {
   //   const docInsert = { a: 1, b: 2, c: 4 }

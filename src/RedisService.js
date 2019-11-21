@@ -70,5 +70,11 @@ class RedisService {
     const lKey = await this.keyConcat(key, options)
     return this._rep.ttl(lKey)
   }
+
+  async del (key, options = {}) {
+    const lKey = await this.keyConcat(key, options)
+    const r = await this._rep.del(lKey)
+    return (r === 1)
+  }
 }
 module.exports = RedisService
