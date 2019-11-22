@@ -19,10 +19,10 @@ describe('run', function () {
     expect(doc1).to.be.a('object')
   })
   it('insert doc 2', async function () {
-    const docInsert = { a: 1, b: { d: 1, e: 2 }, c: 3, f: true, g: ['a', 1, true, { h: 1 }] }
+    const docInsert = { a: 1, b: { d: 1, e: 2 }, c: 3, f: false, g: ['a', 1, true, { h: 1 }] }
     const addDoc = await redis.hmset(keyDoc2, docInsert)
     doc2 = addDoc
-    expect(doc2).to.be.a('object')
+    expect(doc2).to.be.a('object').and.to.be.equal(docInsert)
   })
   it('findByKey', async function () {
     const findDoc = await redis.hgetall(keyDoc1)

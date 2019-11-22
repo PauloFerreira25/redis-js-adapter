@@ -40,7 +40,7 @@ class NativeObject {
 
   converterPrimitive (val) {
     if (this.isBoolean(val)) {
-      return Boolean(val)
+      return val === 'true'
     }
     if (this.isNumeric(val)) {
       return Number(val)
