@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "bluebird": "^3.7.1",
+    "clean-deep": "^3.3.0",
     "flat": "^5.0.0",
     "redis": "^2.8.0"
   }

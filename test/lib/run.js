@@ -1,3 +1,4 @@
+const cleanDeep = require('clean-deep');
 const expect = require('chai').expect
 const chai = require('chai')
 const assertArrays = require('chai-arrays')
@@ -13,7 +14,7 @@ const keyDoc2 = '058a3e25-eebb-4aad-afff-15d150e754e5'
 // let doc4
 describe('run', function () {
   it('insert doc 1', async function () {
-    const docInsert = { a: 1, b: 2, c: 3 }
+    const docInsert = { a: 1, b: 2, c: 3, d: [] }
     const addDoc = await redis.hmset(keyDoc1, docInsert)
     doc1 = addDoc
     expect(doc1).to.be.a('object')
@@ -22,7 +23,7 @@ describe('run', function () {
     const docInsert = { a: 1, b: { d: 1, e: 2 }, c: 3, f: false, g: ['a', 1, true, { h: 1 }] }
     const addDoc = await redis.hmset(keyDoc2, docInsert)
     doc2 = addDoc
-    expect(doc2).to.be.a('object').and.to.be.equal(docInsert)
+    expect(doc2).to.be.a('object').and.to.deep.equal(cleanDeep(docInsert))
   })
   it('findByKey', async function () {
     const findDoc = await redis.hgetall(keyDoc1)

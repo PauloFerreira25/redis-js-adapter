@@ -1,4 +1,4 @@
-
+const cleanDeep = require('clean-deep');
 const RedisReposiroty = require('./RedisReposiroty')
 const flatten = require('flat')
 const unflatten = require('flat').unflatten
@@ -20,7 +20,6 @@ class RedisService {
     await this._rep.init(config)
     return this._rep.getDB()
   }
-
   async keyConcat (key, options) {
     if (options.noPrefix) { return key }
     if (this._config.extras.prefixKey) { return this._config.extras.prefixKey + key }
@@ -36,7 +35,9 @@ class RedisService {
   async hmset (key, doc, options = {}) {
     const lKey = await this.keyConcat(key, options)
     let result
-    const flat = flatten(doc)
+    // Limpa o objeto: 
+    const cleanedObject = cleanDeep(doc)
+    const flat = flatten(cleanedObject)
     if (this._config.extras.expireTimeSeconds) {
       result = await this._rep.hmset(lKey, flat)
       if (result === 'OK') {
@@ -50,7 +51,7 @@ class RedisService {
       result = await this._rep.hmset(lKey, flat)
     }
     if (result === 'OK') {
-      return doc
+      return cleanedObject
     } else {
       throw new Error(result)
     }
